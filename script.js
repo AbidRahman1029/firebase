@@ -1,7 +1,7 @@
 /**
  * @TODO get a reference to the Firebase Database object
  */
-
+const database = firebase.database().ref();
 /**
  * @TODO get const references to the following elements:
  *      - div with id #all-messages
@@ -10,7 +10,11 @@
  *      - button with id #send-btn and the updateDB
  *        function as an onclick event handler
  */
-
+const messagesDiv = document.getElementById("all-messages")
+const username = document.getElementById("username")
+const message = document.getElementById("message")
+const submitbtn = document.getElementById("send-btn")
+submitbtn.onclick = updateDB;
 /**
  * @TODO create a function called updateDB which takes
  * one parameter, the event, that:
@@ -23,6 +27,14 @@
  */
 
 function updateDB(event) {
+  event.preventDefault()
+  let data = {
+    "username": username.value,
+    "message": message.value
+  }
+
+  database.push(data)
+  message.value = ""
   // Prevent default refresh
   // Create data object
   // console.log the object
@@ -36,7 +48,7 @@ function updateDB(event) {
  * handler for the "child_added" event on the database
  * object
  */
-
+database.on("child_added", addMessageToBoard)
 /**
  * @TODO create a function called addMessageToBoard that
  * takes one parameter rowData which:
@@ -49,6 +61,12 @@ function updateDB(event) {
  */
 
 function addMessageToBoard(rowData) {
+  let data = rowData.val()
+  console.log(data)
+  let singleMessage = makeSingleMessageHTML(data.username, data.message)
+
+  messagesDiv.append(singleMessage)
+
   // Store the value of rowData inside object named 'data'
   // console.log data
   // Create a variable named singleMessage
@@ -75,6 +93,18 @@ function addMessageToBoard(rowData) {
  */
 
 function makeSingleMessageHTML(usernameTxt, messageTxt) {
+  let parentDiv = document.createElement("div")
+  parentDiv.className = "single-message"
+  let usernameP = document.createElement("p")
+  usernameP.innerHTML = usernameTxt
+  usernameP.className = "single-message-username"
+  parentDiv.append(usernameP)
+
+  let messageP = document.createElement("p")
+  messageP.innerHTML = messageTxt
+  parentDiv.append(messageP)
+
+  return parentDiv
   // Create Parent Div
   // Add Class name .single-message
   // Create Username P Tag
