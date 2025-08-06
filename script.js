@@ -14,6 +14,7 @@ const messagesDiv = document.getElementById("all-messages")
 const username = document.getElementById("username")
 const message = document.getElementById("message")
 const submitbtn = document.getElementById("send-btn")
+const email = document.getElementById("email")
 submitbtn.onclick = updateDB;
 /**
  * @TODO create a function called updateDB which takes
@@ -27,11 +28,29 @@ submitbtn.onclick = updateDB;
  */
 
 function updateDB(event) {
+  if (username.value.trim() == "" || email.value.trim() == "")
+  {
+    alert("please enter a username and email")
+  }
+  const now = new Date()
+  const time  = now.toLocaleTimeString()
+  const month = now.getMonth()
+  const day = now.getDate()
+  const year = now.getFullYear()
+  fulldate = month + "/" + day + "/" + year
+
+
+
   event.preventDefault()
   let data = {
     "username": username.value,
-    "message": message.value
+    "email": email.value, 
+    "message": message.value,
+    "date": fulldate,
+    "time": time
   }
+
+  
 
   database.push(data)
   message.value = ""
@@ -63,7 +82,7 @@ database.on("child_added", addMessageToBoard)
 function addMessageToBoard(rowData) {
   let data = rowData.val()
   console.log(data)
-  let singleMessage = makeSingleMessageHTML(data.username, data.message)
+  let singleMessage = makeSingleMessageHTML(data.username, data.email, data.message, data.date, data.time)
 
   messagesDiv.append(singleMessage)
 
@@ -92,7 +111,7 @@ function addMessageToBoard(rowData) {
  *      - returns the parent div
  */
 
-function makeSingleMessageHTML(usernameTxt, messageTxt) {
+function makeSingleMessageHTML(usernameTxt, emailTxt, messageTxt, dateTxt, timeTxt) {
   let parentDiv = document.createElement("div")
   parentDiv.className = "single-message"
   let usernameP = document.createElement("p")
@@ -100,9 +119,24 @@ function makeSingleMessageHTML(usernameTxt, messageTxt) {
   usernameP.className = "single-message-username"
   parentDiv.append(usernameP)
 
+  let emailP = document.createElement("p")
+  emailP.innerHTML = emailTxt
+  emailP.className = "single-message-email"
+  parentDiv.append(emailP)
+
   let messageP = document.createElement("p")
   messageP.innerHTML = messageTxt
   parentDiv.append(messageP)
+
+  let dateP = document.createElement("p")
+  dateP.innerHTML = dateTxt
+  dateP.className = "single-message-date"
+  parentDiv.append(dateP)
+
+  let timeP = document.createElement("p")
+  timeP.innerHTML = timeTxt
+  timeP.className = "single-message-time"
+  parentDiv.append(timeP)
 
   return parentDiv
   // Create Parent Div
